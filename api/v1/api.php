@@ -130,13 +130,27 @@ class MyAPI extends API
             }
 
             $invoice['month'] = $invoice['bulan_jatuh_tempo']." ".$invoice['tahun_jatuh_tempo'];
-            var_dump($invoice);
+
+            $invoice['status'] = ($invoice['status'] == 1) ? "terbayar" : "belum terbayar";
 
             $array[] = $invoice;
         }
-        //var_dump($array);
 
         mysqli_close($connection);
+
+        $paidInvoices = array();
+        foreach ($array as $row) {
+            $record["id"]           = $row["id_tagihan"];
+	    	$record["month"]        = $row["month"];
+            $record["dueDate"]      = $row["tanggalJatuhTempo"];
+            $record["countDown"]    = $row["countDown"];
+           	$record["total"]        = $row["totalTagihan"];
+	    	$record["status"]       = $row["status"];
+
+	    	$paidInvoices[] = $record;
+        }
+
+        return json_encode($paidInvoices);
     }
 }
 
